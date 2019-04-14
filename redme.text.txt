@@ -1,0 +1,4 @@
+to start npm run dev
+mongo db create a db and collection name password 
+
+to run mongo click mongod and then mongodbshell
