@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const User = require('../models/users');
+const Task = require('../models/appModel');
 const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
@@ -7,7 +8,36 @@ const jwt = require('jsonwebtoken');
 const connUri = process.env.MONGO_LOCAL_CONN_URL;
 
 module.exports = {
-  add: (req, res) => {
+
+	  add: (req, res) => {
+		  
+	 let result = {};
+      let status = 201;
+	  
+	  console.log(req.body);
+
+	  
+  var new_task = new Task(req.body);
+console.log(new_task.task);
+  //handles null error 
+   if(!new_task.task){
+
+            res.status(400).send({ error:true, message: 'Please provide task/status' });
+
+        }
+else{
+  
+  Task.createTask(new_task, function(err, task) {
+    
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+}
+
+		  
+  },
+  add_mongo: (req, res) => {
     mongoose.connect(connUri, { useNewUrlParser : true }, (err) => {
       let result = {};
       let status = 201;
