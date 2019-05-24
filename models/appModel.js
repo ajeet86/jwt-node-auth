@@ -7,10 +7,27 @@ var Task = function(task){
 };
 
 
-Task.createTask = function createUser(newTask, result) {   
-                     console.log(newTask.task);
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const abc='';
 
-        sql.query("INSERT INTO user set ?", newTask.task, function (err, res) {
+
+const saltRounds = 10;
+
+
+
+
+Task.createTask = function createUser(newTask, result) {   
+             
+					 
+	var salt = bcrypt.genSaltSync(saltRounds);
+var hash = bcrypt.hashSync(newTask.task.password, salt);
+console.log(hash);
+let todo = [newTask.task.name, hash];
+
+
+
+        sql.query("INSERT INTO user(name,password) VALUES(?,?)", todo, function (err, res) {
                 
                 if(err) {
                     console.log("error: ", err);

@@ -9,6 +9,6 @@ module.exports = (router) => {
     //.get(controller.getAll) // This route will be protected shortly
 
 
-    router.route('/login')
-    .post(controller.login);
+    router.route('/mysql_login')
+    .post(controller.mysql_login);
 };
