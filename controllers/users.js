@@ -44,7 +44,7 @@ else{
 	   
 	   
 	    var new_task = new Task(req.body);
-//console.log(new_task.task.password);
+console.log(new_task.task.password);
 const { name, password } = req.body;
 	   
 
@@ -66,8 +66,9 @@ const sql_77 = "select * from user where name = ? " ;
 					       if (!err && new_task) {
             // We could compare passwords in our model instead of below as well
             bcrypt.compare(password, result[0].password).then(match => {
-																 // console.log(password);
-																//  console.log(new_task.task.password);
+																  console.log(password);
+																  console.log(new_task.task.password);
+																  console.log(result[0].password);
               if (match) {
                 status = 200;
                 // Create a token
@@ -81,13 +82,13 @@ const sql_77 = "select * from user where name = ? " ;
                 result1.status = status;
                 result1.result = new_task;
 				
-			//	console.log(result)
+				console.log(result)
 				
 				
               } else {
                 status = 401;
-                result.status = status;
-                result.error = `Authentication error`;
+                result1.status = status;
+                result1.error = `Authentication error password not equal`;
               }
               res.status(status).send(result1);
             }).catch(err => {
@@ -241,17 +242,20 @@ const sql_77 = "select * from user where name = ? " ;
   
    getAll: (req, res) => {
    const sql_77 = "select * from user " ;
-      sql.query( sql_77, (err) => {
+      sql.query( sql_77, (err,sqlresult) => {
       let result = {};
       let status = 200;
+	  console.log(sqlresult);
+	  
       if (!err) {
         const payload = req.decoded;
         // TODO: Log the payload here to verify that it's the same payload
         //  we used when we created the token
-        // console.log('PAYLOAD', payload);
+         console.log('PAYLOAD', payload);
+		 //console.log(payload.user);
         if (payload && payload.user === 'ajeet') {
 			console.log('ffffff');
-          User.find({}, (err, users) => {
+          /*User.find({}, (err, users) => {
             if (!err) {
               result.status = status;
               result.error = err;
@@ -261,8 +265,10 @@ const sql_77 = "select * from user where name = ? " ;
               result.status = status;
               result.error = err;
             }
-            res.status(status).send(result);
-          });
+            res.status(status).send('sssss');
+          });*/
+		 
+			  res.status(status).send(sqlresult);
         } else {
 			console.log('ffffff123');
           status = 401;
@@ -270,6 +276,9 @@ const sql_77 = "select * from user where name = ? " ;
           result.error = `Authentication error`;
           res.status(status).send(result);
         }
+		
+		
+		
       } else {
         status = 500;
         result.status = status;
