@@ -10,7 +10,7 @@ const connUri = process.env.MONGO_LOCAL_CONN_URL;
 
 module.exports = {
 
-	  add: (req, res) => {
+    add:(req, res) => {
 		  
 	 let result = {};
       let status = 201;
@@ -28,39 +28,42 @@ module.exports = {
         }
 else{
   
-  Task.createTask(new_task, function(err, task) {
-    
-    if (err)
-      res.send(err);
-    res.json(task);
-  });
+   Task.findUser(new_task,function(err,task){
+            if (err){
+              res.send(err);
+            }else{
+                 if(task && task.length){
+                  res.json('email exist');
+                 }else{
+                  Task.createTask(new_task, function(err, task) {
+                    if (err){
+                      res.send(err);
+                    }else{
+                      res.json(task);
+                    }
+                       
+                  });
+                  
+                 }
+              //res.json(task);
+            }         
+  }); 
 }
 
 		  
   },
   
   
-   mysql_login: (req, res) => {
-	   
-	   
+  mysql_login: (req, res) => { 
 	    var new_task = new Task(req.body);
 console.log(new_task.task.password);
-const { name, password } = req.body;
-	   
-
-
-const sql_77 = "select * from user where name = ? " ;
-      sql.query( sql_77, [new_task.task.name], (err, result, fields) => {
-												let result1 = {};
-      let status = 200;
-			
-				//console.log(result[0].password);
-				
-						/*Object.keys(result).forEach(function(key) {
-						console.log(result[key].RowDataPacket);
-						
-						});*/
-						
+console.log(new_task.task.email);
+const { email, password } = req.body;
+	
+const sql_77 = "select * from users where email = ? " ;
+      sql.query( sql_77, [new_task.task.email], (err, result, fields) => {
+        let result1 = {};
+        let status = 200;
 						
 				 if(!err) {
 					       if (!err && new_task) {
@@ -70,6 +73,7 @@ const sql_77 = "select * from user where name = ? " ;
 																  console.log(new_task.task.password);
 																  console.log(result[0].password);
               if (match) {
+
                 status = 200;
                 // Create a token
                 const payload = { user: new_task.task.name };
@@ -80,9 +84,12 @@ const sql_77 = "select * from user where name = ? " ;
                 // console.log('TOKEN', token);
                 result1.token = token;
                 result1.status = status;
-                result1.result = new_task;
+                //result1.result = new_task;
+                result1.id = result[0].id;
+                result1.name = result[0].name;
+                result1.email = result[0].email;
 				
-				console.log(result)
+				      console.log(result)
 				
 				
               } else {
@@ -240,12 +247,35 @@ const sql_77 = "select * from user where name = ? " ;
   }
   */
   
+
+ getDashboard:(req, res)=>{
+  console.log('ahaa');
+  let result = {};
+  let status = 200;
+  let err=1;
+  const sql_77 = "select * from users where id = ? " ;
+      sql.query( sql_77, [new_task.task.id], (err, result, fields) => {
+
+      });
+
+   if(0){
+
+   }else{
+    status = 500;
+    result.status = status;
+    result.error = err;
+    res.status(status).send(result);
+   }
+ },
+
    getAll: (req, res) => {
-   const sql_77 = "select * from user " ;
+    const { name, password } = req.body;
+    //console.log(name);
+   const sql_77 = "select * from users " ;
       sql.query( sql_77, (err,sqlresult) => {
       let result = {};
       let status = 200;
-	  console.log(sqlresult);
+	  //console.log(sqlresult);
 	  
       if (!err) {
         const payload = req.decoded;
@@ -253,9 +283,9 @@ const sql_77 = "select * from user where name = ? " ;
         //  we used when we created the token
          console.log('PAYLOAD', payload);
 		 //console.log(payload.user);
-        if (payload && payload.user === 'ajeet') {
+        if (payload && payload.user === name) {
 			console.log('ffffff');
-          /*User.find({}, (err, users) => {
+          User.find({}, (err, users) => {
             if (!err) {
               result.status = status;
               result.error = err;
@@ -266,7 +296,7 @@ const sql_77 = "select * from user where name = ? " ;
               result.error = err;
             }
             res.status(status).send('sssss');
-          });*/
+          });
 		 
 			  res.status(status).send(sqlresult);
         } else {
