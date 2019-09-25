@@ -10,6 +10,14 @@ const router = express.Router();
 const environment = process.env.NODE_ENV; // development
 const stage = require('./config')[environment];
 
+// middleware that is specific to this router
+router.use(function timeLog (req, res, next) {
+
+  console.log('date: ', Date())
+  console.log('Time: ', Date.now())
+  next()
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
